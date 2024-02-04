@@ -7,4 +7,16 @@ En el restaurante los pedidos de platos son directos por parte de los clientes c
 
 
 ## Estrategias para resolver el caso:
-Aun por definir...
+Estructuras:
+** ListaSimple para los platos.
+** Cola para los pedidos.
+** Pila para la reserva de platos invertidos de la semana.
+
+### *APARTADO MENU TACTIL (VISUAL DE CLIENTE)
+**RecomendarPlatos
+**PedidosClientes
+etc...
+### *APARTADO INVERSION (VISUAL ADMIN)
+** InversionPredeterminada...
+** CalcularGanancias, etc
+** etc...
