@@ -3,20 +3,20 @@ using namespace std;
 
 //IMPLEMENTACION DE ESTRUCTURA DE DATOS
 struct ListaSimple{ //!Lista de Platos
-    string plato;
+    string nombre;
     string calorias;
     double precio;
 
     ListaSimple* sig;
-}; 
+} plato;
 
 struct Cola{ //! Cola de pedidos durante el dia;
 
-};
+} pedido;
 
 struct Pila{ //! Pila de platos hechos durante la semana.
     
-};
+} historial;
 
 ListaSimple* CrearLista(){
 
