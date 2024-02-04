@@ -8,9 +8,9 @@ En el restaurante los pedidos de platos son directos por parte de los clientes c
 
 ## Estrategias para resolver el caso:
 Estructuras:
-** ListaSimple para los platos.
-** Cola para los pedidos.
-** Pila para la reserva de platos invertidos de la semana.
+-ListaSimple para los platos.
+-Cola para los pedidos.
+-Pila para la reserva de platos invertidos de la semana.
 
 ### *APARTADO MENU TACTIL (VISUAL DE CLIENTE)
 **RecomendarPlatos
@@ -20,3 +20,14 @@ etc...
 ** InversionPredeterminada...
 ** CalcularGanancias, etc
 ** etc...
+
+## ORDEN DE CONTRIBUCION:
+oe ya pe asi quedamos, por obvias razones todos no podemos hacer una parte al mismo tiempo,, si no que en orden y en el repositorio el archivo <proyecto.cpp> se va a ir actualizando.
+ya les ire guiando.
+
+1° @~Harold RS  haces las operaciones necesarias para las Pilas, Colas y ListaSimple.
+2° Yo llenare todas la estructuras con la info, y tambien despues de cada bloque.
+3° Angel, hace el bloque de recomendar plato segun la edad.
+4° Julio y Mauro haran la parte de calcular la ganancia en toda la semana y como se invertira para la siguiente.
+5° Eduar es el tester.
+
