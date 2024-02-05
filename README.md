@@ -13,7 +13,7 @@ En el restaurante los pedidos de platos son directos por parte de los clientes c
 
 ### Al termiar la primera semana, se va a mostrar del dia lunes a domingo cada la cantidad de ventas y que platos se compro cada dia, despues se va a mostrar y calcular la ganancia semanal, lo cual indicara si hubo ganancias (mas del doble de la inversion recuperada), si no hubo ganancias (menos de la inversion), y que reconsidere ajustar los precios de cada plato de la listaSimple (si es menor que el doble pero mayor que la inversion).
 
-### Despues de la indiacion se va a pedir OLBIGATORIAMENTE aumentar el stock de inversion de los platos, gastando asi las ganancias dependiendo del plato ya que se va a mostrar el costo y la cantidad de platos que se va a gastar.
+### Despues de la indiacion se va a pedir OLBIGATORIAMENTE aumentar el stock de inversion de los platos, dependiendo del plato ya que se va a mostrar el costo y la cantidad de platos que se quiere invertir para la proxima semana.
 ## Ahora OPCIONALMENTE se va a pedir reajustar los precios de los platos en el restaurante de esta manera para que se beneficie los costos y ganancia segun quiera.
 ## Ahora si hay otra semana la siguiente semana, se vera como los precios se cambiaron si es que se ajustaron y los cambios necesarios como el stock etc. ...
 
