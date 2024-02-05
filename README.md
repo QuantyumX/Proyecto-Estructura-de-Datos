@@ -7,27 +7,37 @@ En el restaurante los pedidos de platos son directos por parte de los clientes c
 
 
 ## Estrategias para resolver el caso:
+### Vamos a crear Lista simple para llenar la informacion de los platos predeterminadamente en el codigo, y 2 Pilas, una para la informacion de pedidos del cliente para tener el historial de todos los pedidos hechos durante la semana y la otra pila para el stock de los platos invertidos en la semana.
+
+### Ahora en un bucle de semanas y dias, haremos los pedidos en el Menu tactil, donde ahi dependiendo de la edad se va a recomendar y mostrar los platos, y ahi va a elejir el pedido que se va a almacenar en la pila de pedido y a la vez el plato escogido se va a restar 1 en la pila de stock de inversion semanal, asi repitiendo en toda la semana.
+
+### Al termiar la primera semana, se va a mostrar del dia lunes a domingo cada la cantidad de ventas y que platos se compro cada dia, despues se va a mostrar y calcular la ganancia semanal, lo cual indicara si hubo ganancias (mas del doble de la inversion recuperada), si no hubo ganancias (menos de la inversion), y que reconsidere ajustar los precios de cada plato de la listaSimple (si es menor que el doble pero mayor que la inversion).
+
+### Despues de la indiacion se va a pedir OLBIGATORIAMENTE aumentar el stock de inversion de los platos, gastando asi las ganancias dependiendo del plato ya que se va a mostrar el costo y la cantidad de platos que se va a gastar.
+## Ahora OPCIONALMENTE se va a pedir reajustar los precios de los platos en el restaurante de esta manera para que se beneficie los costos y ganancia segun quiera.
+## Ahora si hay otra semana la siguiente semana, se vera como los precios se cambiaron si es que se ajustaron y los cambios necesarios como el stock etc. ...
+
 Estructuras:
--ListaSimple para los platos.
--Cola para los pedidos.
--Pila para la reserva de platos invertidos de la semana.
+- ListaSimple para los platos.
+- Pila para los pedidos durante la semana.
+- Pila para la reserva de platos invertidos de la semana.
 
 ### *APARTADO MENU TACTIL (VISUAL DE CLIENTE)
-**RecomendarPlatos
-**PedidosClientes
-etc...
+* RecomendarPlatos
+* PedidosClientes
+* etc...
 ### *APARTADO INVERSION (VISUAL ADMIN)
-** InversionPredeterminada...
-** CalcularGanancias, etc
-** etc...
+* InversionPredeterminada...
+* CalcularGanancias, etc
+* etc...
 
 ## ORDEN DE CONTRIBUCION:
-oe ya pe asi quedamos, por obvias razones todos no podemos hacer una parte al mismo tiempo,, si no que en orden y en el repositorio el archivo <proyecto.cpp> se va a ir actualizando.
+Asi quedamos, por obvias razones todos no podemos hacer una parte al mismo tiempo, si no que en orden y en el repositorio el archivo <proyecto.cpp> se va a ir actualizando.
 ya les ire guiando.
 
-1° @~Harold RS  haces las operaciones necesarias para las Pilas, Colas y ListaSimple.
-2° Yo llenare todas la estructuras con la info, y tambien despues de cada bloque.
-3° Angel, hace el bloque de recomendar plato segun la edad.
-4° Julio y Mauro haran la parte de calcular la ganancia en toda la semana y como se invertira para la siguiente.
-5° Eduar es el tester.
+* 1° Harold haces las operaciones necesarias para la Pila y ListaSimple.
+* 2° Yo llenare todas la estructuras con la info, y tambien despues de cada bloque.
+* 3° Angel, hace el bloque de recomendar plato segun la edad.
+* 4° Julio y Mauro haran la parte de calcular la ganancia en toda la semana y como se invertira para la siguiente.
+* 5° Eduar es el tester.
 
