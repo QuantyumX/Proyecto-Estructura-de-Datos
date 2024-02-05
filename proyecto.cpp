@@ -30,7 +30,7 @@ struct Pila{ //! Pila de pedidos durante el dia y semana.
 //! Aca deberia declararse para el stock de platos, pero la verdad nose como hcerlo, si solo con un array o algun estructura de datos xd si tienen en mente una avisan sino ya yo veo.
 
 
-//AGREGAR LAS OPERACIONES PARA CADA ESTRUCTURA DE DATOS. (como insertar, eliminar para las dos listas) y (push, pop y vaciar para la pila y RECORRER LA PILA)
+//AGREGAR LAS OPERACIONES PARA CADA ESTRUCTURA DE DATOS. (como insertar, eliminar para las dos listas) y (push, pop y vaciar para la pila) ya si falta alguna ya dsp lo agrego.
 
 
 
