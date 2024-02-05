@@ -8,7 +8,7 @@ struct ListaSimple1{ //!Lista de Platos
     double precio;
 
     ListaSimple1* sig;
-} *plato;
+};
 
 struct ListaSimple2{ //! Lista de datos del DIA para la inversion.
     string nombreDia;
@@ -16,7 +16,7 @@ struct ListaSimple2{ //! Lista de datos del DIA para la inversion.
     int ganancias;
 
     ListaSimple2* sig;
-} *infoDia;
+};
 
 struct Pila{ //! Pila de pedidos durante el dia y semana.
     string nombreCliente;
@@ -25,12 +25,12 @@ struct Pila{ //! Pila de pedidos durante el dia y semana.
     int compra;
 
     Pila* sig;
-} *pedido;
+};
 
-//! Aca deberia declararse para el stock de platos, pero la verdad nose como hcerlo, si solo con un array o algun estructura de datos xd si tienen en mente una avisan.
+//! Aca deberia declararse para el stock de platos, pero la verdad nose como hcerlo, si solo con un array o algun estructura de datos xd si tienen en mente una avisan sino ya yo veo.
 
 
-//AGREGAR LAS OPERACIONES PARA CADA ESTRUCTURA DE DATOS.
+//AGREGAR LAS OPERACIONES PARA CADA ESTRUCTURA DE DATOS. (como insertar, eliminar para las dos listas) y (push, pop y vaciar para la pila)
 
 
 
@@ -38,7 +38,10 @@ struct Pila{ //! Pila de pedidos durante el dia y semana.
 
 
 int main(){
-    plato = NULL, pedido = NULL, infoDia = NULL;
+   ListaSimple1* plato = NULL;
+   ListaSimple2* infoDia = NULL;
+   Pila* pedido = NULL;
+
     string dia[] = { "LUNES", "MARTES", "MIERCOLES", "JUEVES", "VIERNES", "SABADO", "DOMINGO" };
     int i = 1, j; 
     char opc;
