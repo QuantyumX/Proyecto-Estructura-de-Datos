@@ -2,15 +2,15 @@
 using namespace std;
 
 //DECLARACION  DE ESTRUCTURA DE DATOS
+//* LISTAS
 struct ListaSimple1{ //!Lista de Platos
     string nombre;
-    string calorias;
+    int calorias;
     int stock;
     double precio;
     double inversion;
     ListaSimple1* sig;
 };
-
 struct ListaSimple2{ //! Lista de datos del DIA para la inversion.
     string nombreDia;
     double ingresos;
@@ -19,6 +19,23 @@ struct ListaSimple2{ //! Lista de datos del DIA para la inversion.
     ListaSimple2* sig;
 };
 
+//* COLAS
+struct SubCola{//! Cola de pedidos de cada cliente;
+    string pedido;
+    int raciones;
+    double compra;
+
+    SubCola* sig;
+};
+struct Cola{ //! Cola de clientes durante el dia.
+    string nombreCliente;
+    int edad;
+    SubCola* Pedido;
+
+    Cola* sig;
+};
+
+//* PILAS
 struct SubPila{//! Pila de pedidos de cada cliente;
     string pedido;
     int raciones;
@@ -26,27 +43,18 @@ struct SubPila{//! Pila de pedidos de cada cliente;
 
     SubPila* sig;
 };
-
 struct Pila{ //! Pila de clientes durante el dia y semana.
     string nombreCliente;
-    string edad;
+    int edad;
     SubPila* Pedido;
 
     Pila* sig;
 };
 
-<<<<<<< HEAD
-=======
-//! Aca deberia declararse para el stock de platos, pero la verdad nose como hcerlo, si solo con un array o algun estructura de datos xd si tienen en mente una avisan sino ya yo veo.
-
-
-//AGREGAR LAS OPERACIONES PARA CADA ESTRUCTURA DE DATOS. (como insertar, eliminar para las dos listas) y (push, pop y vaciar para la pila) ya si falta alguna ya dsp lo agrego.
-
->>>>>>> d9defd4b44170efed77f2644aa23f262404270ab
 
 //PROTOTIPOS FUNCIONES DE ESTRUCTURAS
 //* ListaSimple1: Plato
-void InsertarPlato(ListaSimple1*&, string, string, int, double, double);
+void InsertarPlato(ListaSimple1*&, string, int, int, double, double);
 void MostrarListaPlatos(ListaSimple1*);
 void EliminarPlatoEspecifico(ListaSimple1*&, string);
 //* ListaSimple2: InfoDia
@@ -54,6 +62,14 @@ void InsertarInfoDia(ListaSimple2*&, string, double, double);
 void MostrarInfoDia(ListaSimple2*);
 void eliminarInfoInicio(ListaSimple2* &);
 void VaciarInfoSemana(ListaSimple2*&);
+//* SubCola: Pedido
+void encolarPedido(SubCola*&, SubCola*&, string, int, double);
+void imprimirColaPedidos(SubCola*);
+//* Cola: Cliente;
+void encolarCliente(Cola*&, Cola*&, int);
+void desencolarCliente(Cola*&, Cola*&);
+void vaciarColaClientes(Cola*&, Cola*&);
+void imprimirColaClientes(Cola*, SubCola*);
 //* SubPila: Pedido
 void pushPedido(SubPila*&, string, int, double);
 void popPedido(SubPila*&);
@@ -65,7 +81,7 @@ void popCliente(Pila*&);
 void vaciarPila(Pila*&);
 void MostrarHistorial(Pila*);
 
-
+void MostrarPlatosSegunEdad(ListaSimple1*, int);
 
 
 int main(){
@@ -73,22 +89,27 @@ int main(){
     ListaSimple2* InfoDia = NULL;
     SubPila* Pedido = NULL;
     Pila* Cliente = NULL;
+    SubCola* frenteP = NULL;
+    SubCola* finP = NULL;
+    Cola* frenteC = NULL;
+    Cola* finC = NULL;
     //INSERTAMOS LOS PLATOS DETERMINADOS.
-    InsertarPlato(Plato, "Arroz oon pollo", "630", 20, 12.90, 8);
-    InsertarPlato(Plato, "Tallarines verdes con pollo", "750", 15, 12.50, 7.30);
-    InsertarPlato(Plato, "Causa peruana", "320", 15, 14.00, 4.60);
-    InsertarPlato(Plato, "Cuy al horno", "800", 10, 25.00, 18.00);
-    InsertarPlato(Plato, "Aji de gallina", "600", 15, 11.50, 5.60);
-    InsertarPlato(Plato, "Lomo saltado", "710", 20, 14.00, 7.50);
-    InsertarPlato(Plato, "Ceviche mixto", "400", 20, 20.00, 7.50);
-    InsertarPlato(Plato, "Jalea de mariscos", "760", 15, 15.00, 8.60);
-    InsertarPlato(Plato, "Tacu Tacu con bistec", "700", 15, 16.00, 8.60);
-    InsertarPlato(Plato, "Anticuchos", "190", 25, 10.00, 4.60);
-    InsertarPlato(Plato, "Torta de selva negra", "410", 15, 6.00, 4.00);
-    InsertarPlato(Plato, "Arroz con leche", "230", 30, 3.50, 1.50);
+    InsertarPlato(Plato, "Arroz oon pollo", 630, 20, 12.90, 8);
+    InsertarPlato(Plato, "Tallarines verdes con pollo", 750, 15, 12.50, 7.30);
+    InsertarPlato(Plato, "Causa peruana", 320, 15, 14.00, 4.60);
+    InsertarPlato(Plato, "Cuy al horno", 800, 10, 25.00, 18.00);
+    InsertarPlato(Plato, "Aji de gallina", 590, 15, 11.50, 5.60);
+    InsertarPlato(Plato, "Lomo saltado", 710, 20, 14.00, 7.50);
+    InsertarPlato(Plato, "Ceviche mixto", 400, 20, 20.00, 7.50);
+    InsertarPlato(Plato, "Jalea de mariscos", 760, 15, 15.00, 8.60);
+    InsertarPlato(Plato, "Tacu Tacu con bistec", 700, 15, 16.00, 8.60);
+    InsertarPlato(Plato, "Anticuchos", 190, 25, 10.00, 4.60);
+    InsertarPlato(Plato, "Torta de selva negra", 410, 15, 6.00, 4.00);
+    InsertarPlato(Plato, "Arroz con leche", 230, 30, 3.50, 1.50);
 
     string dia[] = { "LUNES", "MARTES", "MIERCOLES", "JUEVES", "VIERNES", "SABADO", "DOMINGO" };
-    int i = 1, j; 
+    string nombreC;
+    int i = 1, j, edad; 
     char opc;
     while(true){
         cout<<"                                  *************** Semana "<<i<<" *************** \n";
@@ -104,13 +125,15 @@ int main(){
 					cout << "	| Mira las recomendaciones que te damos de los platillos  con sus respectivas calorias segun tu edad. |"<<endl;
 					cout << "	-------------------------------------------------------------------------------------------------------"<<endl;
 					cout << endl;
-					cout << "Primero ingresa tu EDAD:  "; //ESTE COUT ESTARA DENTRO DE LA FUNCION INSERTAR(push) para la pila
-					//Se llena el campo de la pila.
+                    cout << "Ingresa tu NOMBRE:  "; 
+                    cin.ignore();
+					getline(cin, nombreC);
+					cout << "Ahora ingresa tu EDAD:  "; 
+                    cin>>edad;
 					cout << endl;
-					cout << "Finalmente ingresa tu NOMBRE:  "; //ESTE COUT ESTARA DENTRO DE LA FUNCION INSERTAR(push) para la pila
-                    // se llena el campo de la pila.
 					cout << endl;
-					cout << endl;
+                    MostrarPlatosSegunEdad(Plato, edad);
+                    //...aun constryendo :v
                     cout<<" *Siguiente cliente? (S/N)? \n";
                     cin>>opc;
                     if (opc == 'N' || opc == 'n'){
@@ -131,7 +154,7 @@ int main(){
 
 //! OPERACIONES Lista de platos
 //* Insertar Plato y sus datos.
-void InsertarPlato(ListaSimple1*& Plato, string nomPlato, string cal, int stock, double inversion, double precio){
+void InsertarPlato(ListaSimple1*& Plato, string nomPlato, int cal, int stock, double precio, double inversion){
     ListaSimple1* p;
     ListaSimple1* lista;
     p = new ListaSimple1;
@@ -151,15 +174,21 @@ void InsertarPlato(ListaSimple1*& Plato, string nomPlato, string cal, int stock,
         lista->sig = p;
     }
 }
-
 //* Mostrar Todos LosPLatos.
 void MostrarListaPlatos(ListaSimple1* Plato){
     ListaSimple1* lista = Plato;
+    
     while(lista != NULL){
-        cout<<lista->nombre << " ";
+    
+        cout<<"*"<<lista->nombre<<"* "<<endl;
+		cout<<"Calorias: "<<lista->calorias <<endl;
+		cout<<"Stock: "<<lista->stock<<endl;
+		cout<<"Precio: s/. "<<lista->precio<<endl;
+		cout << "----------------------\n";
         lista = lista->sig;
+        
     }
-    cout << endl;
+   
 }
 //* Eliminar Plato Especifico .
 void EliminarPlatoEspecifico(ListaSimple1*& Plato, string valor){
@@ -229,6 +258,78 @@ void VaciarInfoSemana(ListaSimple2*& InfoDia){
         eliminarInicio(InfoDia);
     }
 }
+//! OPERACIONES SubCola de pedidos de cada cliente.
+//*Encolar pedido del cliente
+void encolarPedido(SubCola*& frenteP, SubCola*& finP, string pedido, int raciones, double compra){
+    SubCola* nuevoNodo = new SubCola;
+    nuevoNodo->pedido= pedido;
+    nuevoNodo->sig = NULL;
+
+    if (frenteP == NULL) {
+        frenteP = finP= nuevoNodo;
+    } else {
+        finP->sig = nuevoNodo;
+        finP = nuevoNodo;
+    }
+}
+//* Reporta los pedidos de cada cliente.
+void imprimirColaPedidos(SubCola* frenteP){
+    cout<< "Pedidos: ";
+    while (frenteP != NULL) {
+        cout<<frenteP->pedido << " ";
+        cout<<frenteP->raciones << " \n";
+        frenteP = frenteP->sig;
+    }
+    cout<<endl;
+}
+
+//! OPERACIONES Cola de clientes.
+//* Encolar nuevo cliente.
+void encolarCliente(Cola*& frenteC, Cola*& finC, string nombreC, int edad){
+    Cola* nuevoNodo = new Cola;
+    nuevoNodo->nombreCliente = nombreC;
+    nuevoNodo->edad = edad;
+    nuevoNodo->sig = NULL;
+
+    if (frenteC == NULL) {
+        frenteC = finC= nuevoNodo;
+    } else {
+        finC->sig = nuevoNodo;
+        finC = nuevoNodo;
+    }
+}
+//* Desencolar cliente
+void desencolarCliente(Cola*& frenteC, Cola*& finC){
+    if (frenteC != NULL) {
+        Cola* nodoAEliminar = frenteC;
+        frenteC = frenteC->sig;
+        delete nodoAEliminar;
+
+        if (frenteC == NULL) {
+            finC = NULL;
+        }
+    } else {
+        cout << "La cola está vacía." <<endl;
+    }
+}
+//* Vaciar cola de clientes.
+void vaciarColaClientes(Cola*& frenteC, Cola*& finC){
+    while (frenteC != NULL) {
+        desencolarCliente(frenteC, finC);
+    }
+}
+
+//* Imprimir  los clientes.
+void imprimirColaClientes(Cola* frenteC, SubCola* frenteP){
+    cout<< "Cola: ";
+    while (frenteC != NULL) {
+        cout<<frenteC->nombreCliente << " ";
+        imprimirColaPedidos(frenteP);
+
+        frenteC = frenteC->sig;
+    }
+    cout<<endl;
+}
 
 //!OPERACIONES Pila de pedidos de cada cliente.
 //* Insertar cliente al historial.
@@ -268,7 +369,7 @@ void MostrarPedidos(SubPila* Pedido){
 
 //! OPERACIONES Pila de cliente y sus pedidos (historial de la semana).
 //* Insertar un nuevo pedido al historial.
-void pushCliente(Pila*& Cliente, SubPila*& Pedido, string nomCliente, string edad, string pedido, int raciones, double compra){
+void pushCliente(Pila*& Cliente, SubPila*& Pedido, string nomCliente, int edad, string pedido, int raciones, double compra){
     Pila* nuevoCliente = new Pila;
     nuevoCliente->nombreCliente = nomCliente;
     nuevoCliente->edad = edad;
@@ -301,4 +402,46 @@ void MostrarHistorial(Pila* Cliente){
         cout << "Cliente: " << actual->nombreCliente << ", Edad: " << actual->edad << endl;
         actual = actual->sig;
     }
+}
+
+
+void MostrarPlato(ListaSimple1* lista){
+        cout<<"                                                 *"<<lista->nombre<<"* "<<endl;
+		cout<<"                                                 Calorias: "<<lista->calorias <<endl;
+		cout<<"                                                 Stock: ["<<lista->stock<<"]"<<endl;
+		cout<<"                                                 Precio: s/. "<<lista->precio<<endl;
+		cout << "                                               ----------------------\n";
+}
+//* Mostrar Todos LosPLatos.
+//* Mostrar Platos Según la Edad del Cliente.
+void MostrarPlatosSegunEdad(ListaSimple1* Plato, int edad){
+	
+    ListaSimple1* lista = Plato;
+    
+        if (1 <= edad && edad <= 8) {
+            cout << "			--------------------------------------------------------------------" << endl;
+            cout <<  endl;
+            cout << "						[Poco ACTIVO Fisicamente] \n" << endl; 
+            while (lista != NULL) {              
+                if (lista->calorias >= 190 && lista->calorias <= 400) {
+                    MostrarPlato(lista);
+                }
+                lista = lista->sig;
+            }
+            lista = Plato;
+            cout << "			--------------------------------------------------------------------" << endl;
+            cout <<  endl;
+            cout << "						[Muy ACTIVO Fisicamente] \n" << endl;
+            while (lista != NULL) {
+                if (lista->calorias >= 320 && lista->calorias <= 590) {
+                    MostrarPlato(lista);
+                }
+                lista = lista->sig;
+            }
+            cout << "			--------------------------------------------------------------------" << endl;
+        } else if(9 <= edad && edad <= 12){
+        	/////// COMPLETAR
+		} else if(13 <= edad && edad <= 19){
+			///// COMPLETAR
+		}
 }
