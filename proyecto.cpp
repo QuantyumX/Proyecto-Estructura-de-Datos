@@ -63,10 +63,9 @@ void MostrarInfoDia(ListaSimple2*);
 void eliminarInfoInicio(ListaSimple2* &);
 void VaciarInfoSemana(ListaSimple2*&);
 //* SubCola: Pedido
-void encolarPedido(SubCola*&, SubCola*&, string, int, double);
 void imprimirColaPedidos(SubCola*);
 //* Cola: Cliente;
-void encolarCliente(Cola*&, Cola*&, int);
+void encolarCliente(ListaSimple1*, Cola*&, SubCola*&, Cola*&, SubCola*&, string, int, string, int);
 void desencolarCliente(Cola*&, Cola*&);
 void vaciarColaClientes(Cola*&, Cola*&);
 void imprimirColaClientes(Cola*, SubCola*);
@@ -81,6 +80,8 @@ void popCliente(Pila*&);
 void vaciarPila(Pila*&);
 void MostrarHistorial(Pila*);
 
+//PROTOTIPOS DEL PROGRAMA
+void MostrarPlato(ListaSimple1*);
 void MostrarPlatosSegunEdad(ListaSimple1*, int);
 
 
@@ -108,9 +109,10 @@ int main(){
     InsertarPlato(Plato, "Arroz con leche", 230, 30, 3.50, 1.50);
 
     string dia[] = { "LUNES", "MARTES", "MIERCOLES", "JUEVES", "VIERNES", "SABADO", "DOMINGO" };
-    string nombreC;
-    int i = 1, j, edad; 
+    string nombreC, pedido;
+    int i = 1, j, edad, raciones;
     char opc;
+    bool marca = true;
     while(true){
         cout<<"                                  *************** Semana "<<i<<" *************** \n";
         int k = 0;
@@ -133,7 +135,11 @@ int main(){
 					cout << endl;
 					cout << endl;
                     MostrarPlatosSegunEdad(Plato, edad);
-                    //...aun constryendo :v
+                    encolarCliente(Plato, frenteC, frenteP, finC, finP, nombreC, edad, pedido, raciones);
+                        
+
+  
+      
                     cout<<" *Siguiente cliente? (S/N)? \n";
                     cin>>opc;
                     if (opc == 'N' || opc == 'n'){
@@ -156,7 +162,6 @@ int main(){
 //* Insertar Plato y sus datos.
 void InsertarPlato(ListaSimple1*& Plato, string nomPlato, int cal, int stock, double precio, double inversion){
     ListaSimple1* p;
-    ListaSimple1* lista;
     p = new ListaSimple1;
     p->nombre = nomPlato;
     p->calorias = cal;
@@ -167,6 +172,7 @@ void InsertarPlato(ListaSimple1*& Plato, string nomPlato, int cal, int stock, do
     if (Plato == NULL){
         Plato = p;
     } else {
+        ListaSimple1* lista;
         lista = Plato;
         while (lista->sig != NULL){
             lista = lista->sig;
@@ -259,19 +265,7 @@ void VaciarInfoSemana(ListaSimple2*& InfoDia){
     }
 }
 //! OPERACIONES SubCola de pedidos de cada cliente.
-//*Encolar pedido del cliente
-void encolarPedido(SubCola*& frenteP, SubCola*& finP, string pedido, int raciones, double compra){
-    SubCola* nuevoNodo = new SubCola;
-    nuevoNodo->pedido= pedido;
-    nuevoNodo->sig = NULL;
 
-    if (frenteP == NULL) {
-        frenteP = finP= nuevoNodo;
-    } else {
-        finP->sig = nuevoNodo;
-        finP = nuevoNodo;
-    }
-}
 //* Reporta los pedidos de cada cliente.
 void imprimirColaPedidos(SubCola* frenteP){
     cout<< "Pedidos: ";
@@ -285,18 +279,56 @@ void imprimirColaPedidos(SubCola* frenteP){
 
 //! OPERACIONES Cola de clientes.
 //* Encolar nuevo cliente.
-void encolarCliente(Cola*& frenteC, Cola*& finC, string nombreC, int edad){
+//? Falta comprobar por impresion si cada cliente tiene su propia cola de Pedidos, y tambien falta asignar cada cliente a la Pila.
+void encolarCliente(ListaSimple1* Plato, Cola*& frenteC, SubCola*& frenteP, Cola*& finC, SubCola*& finP, string nombreC, int edad, string pedido, int raciones){
     Cola* nuevoNodo = new Cola;
     nuevoNodo->nombreCliente = nombreC;
     nuevoNodo->edad = edad;
+    nuevoNodo->Pedido = NULL;
     nuevoNodo->sig = NULL;
-
     if (frenteC == NULL) {
         frenteC = finC= nuevoNodo;
     } else {
         finC->sig = nuevoNodo;
         finC = nuevoNodo;
     }
+    char rpt = 's';
+    do{
+        ListaSimple1* listaActual = Plato;
+        cout<<"Ingrese su plato a pedir: ";
+        cin.ignore();
+        getline(cin, pedido);
+        cout<<"Cantidad de raciones: ";
+        cin>>raciones;
+        SubCola* PedidoCliente = NULL;
+        while (listaActual != NULL){
+            if (listaActual->nombre.compare(pedido) && listaActual->stock >= raciones){
+                if (PedidoCliente == NULL){
+                    PedidoCliente = new SubCola;
+                    PedidoCliente->sig = NULL;
+                    frenteP = finP = PedidoCliente;
+                    nuevoNodo->Pedido = PedidoCliente;
+                }
+                SubCola* nuevoPedido = new SubCola;
+                nuevoPedido->pedido = pedido; 
+                nuevoPedido->raciones = raciones;
+                nuevoPedido->compra = raciones * listaActual->precio;
+                nuevoPedido->sig = NULL;
+                finP->sig = nuevoPedido;
+                finP = nuevoPedido;
+                listaActual->stock -= raciones;
+                cout<<" << Agregado con exito >> \n";
+                break;
+            } else {
+                listaActual = listaActual->sig;
+            }
+        }
+        if (listaActual == NULL){
+            cout<<" No hay suficiente stock de tu pedido, intente con otro o disminuya las raciones. \n";
+        }
+        cout<<" *Otro plato (S/N)?: ";
+        cin>>rpt;
+    } while(rpt == 's' || rpt == 'S');
 }
 //* Desencolar cliente
 void desencolarCliente(Cola*& frenteC, Cola*& finC){
@@ -439,9 +471,120 @@ void MostrarPlatosSegunEdad(ListaSimple1* Plato, int edad){
                 lista = lista->sig;
             }
             cout << "			--------------------------------------------------------------------" << endl;
-        } else if(9 <= edad && edad <= 12){
-        	/////// COMPLETAR
+        }else if(9 <= edad && edad <= 12){
+        	cout << "			--------------------------------------------------------------------" << endl;
+            cout <<  endl;
+            cout << "						[Poco ACTIVO Fisicamente] \n" << endl; 
+            while (lista != NULL) {              
+                if (lista->calorias >= 320 && lista->calorias <= 590) {
+                    MostrarPlato(lista);
+                }
+                lista = lista->sig;
+            }
+            lista = Plato;
+            cout << "			--------------------------------------------------------------------" << endl;
+            cout <<  endl;
+            cout << "						[Muy ACTIVO Fisicamente] \n" << endl;
+            while (lista != NULL) {
+                if (lista->calorias >= 400 && lista->calorias <= 630) {
+                    MostrarPlato(lista);
+                }
+                lista = lista->sig;
+            }
+            cout << "			--------------------------------------------------------------------" << endl;
+   
 		} else if(13 <= edad && edad <= 19){
-			///// COMPLETAR
+        	cout << "			--------------------------------------------------------------------" << endl;
+            cout <<  endl;
+            cout << "						[Poco ACTIVO Fisicamente] \n" << endl; 
+            while (lista != NULL) {              
+                if (lista->calorias >= 400 && lista->calorias <= 630) {
+                    MostrarPlato(lista);
+                }
+                lista = lista->sig;
+            }
+            lista = Plato;
+            cout << "			--------------------------------------------------------------------" << endl;
+            cout <<  endl;
+            cout << "						[Muy ACTIVO Fisicamente] \n" << endl;
+            while (lista != NULL) {
+                if (lista->calorias >= 590 && lista->calorias <= 710) {
+                    MostrarPlato(lista);
+                }
+                lista = lista->sig;
+            }
+            cout << "			--------------------------------------------------------------------" << endl;
+   
+		} else if(20 <= edad && edad <= 31){
+			cout << "			--------------------------------------------------------------------" << endl;
+            cout <<  endl;
+            cout << "						[Poco ACTIVO Fisicamente] \n" << endl; 
+            while (lista != NULL) {              
+                if (lista->calorias >= 410 && lista->calorias <= 700) {
+                    MostrarPlato(lista);
+                }
+                lista = lista->sig;
+            }
+            lista = Plato;
+            cout << "			--------------------------------------------------------------------" << endl;
+            cout <<  endl;
+            cout << "						[Muy ACTIVO Fisicamente] \n" << endl;
+            while (lista != NULL) {
+                if (lista->calorias >= 710 && lista->calorias <= 800) {
+                    MostrarPlato(lista);
+                }
+                lista = lista->sig;
+            }
+            cout << "			--------------------------------------------------------------------" << endl;
+		
+		}else if(32 <= edad && edad <= 50){
+			cout << "			--------------------------------------------------------------------" << endl;
+            cout <<  endl;
+            cout << "						[Poco ACTIVO Fisicamente] \n" << endl; 
+            while (lista != NULL) {              
+                if (lista->calorias >= 400 && lista->calorias <= 630) {
+                    MostrarPlato(lista);
+                }
+                lista = lista->sig;
+            }
+            lista = Plato;
+            cout << "			--------------------------------------------------------------------" << endl;
+            cout <<  endl;
+            cout << "						[Muy ACTIVO Fisicamente] \n" << endl;
+            while (lista != NULL) {
+                if (lista->calorias >= 630 && lista->calorias <= 760) {
+                    MostrarPlato(lista);
+                }
+                lista = lista->sig;
+            }
+            cout << "			--------------------------------------------------------------------" << endl;
+	
+		}else if( edad>=51 ){
+			cout << "			--------------------------------------------------------------------" << endl;
+            cout <<  endl;
+            cout << "						[Poco ACTIVO Fisicamente] \n" << endl; 
+            while (lista != NULL) {              
+                if (lista->calorias >= 320 && lista->calorias <= 590) {
+                    MostrarPlato(lista);
+                }
+                lista = lista->sig;
+            }
+            lista = Plato;
+            cout << "			--------------------------------------------------------------------" << endl;
+            cout <<  endl;
+            cout << "						[Muy ACTIVO Fisicamente] \n" << endl;
+            while (lista != NULL) {
+                if (lista->calorias >= 590 && lista->calorias <= 750) {
+                    MostrarPlato(lista);
+                }
+                lista = lista->sig;
+            }
+            cout << "			--------------------------------------------------------------------" << endl;
+		
 		}
+		
+}
+
+void CambiosDelStock(){
+
 }
