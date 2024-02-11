@@ -58,21 +58,20 @@ void InsertarPlato(ListaSimple1*&, string, int, int, double, double);
 void MostrarListaPlatos(ListaSimple1*);
 void EliminarPlatoEspecifico(ListaSimple1*&, string);
 //* ListaSimple2: InfoDia
-void InsertarInfoDia(ListaSimple2*&, string, double, double);
+void InsertarInfoDia(ListaSimple2*&, string[], double, double, int, double);
 void MostrarInfoDia(ListaSimple2*);
 void eliminarInfoInicio(ListaSimple2* &);
 void VaciarInfoSemana(ListaSimple2*&);
 //* SubCola: Pedido
 void imprimirColaPedidos(SubCola*);
 //* Cola: Cliente;
-void encolarCliente(Pila*&, SubPila*&, ListaSimple1*, Cola*&, Cola*&, string, int);
+void encolarCliente(Pila*&, SubPila*&, ListaSimple1*, Cola*&, Cola*&, string, int, double, double);
 void desencolarCliente(Cola*&, Cola*&);
 void vaciarColaClientes(Cola*&, Cola*&);
 void imprimirColaClientes(Cola*);
 //* SubPila: Pedido
 void pushPedido(SubPila*&, string, int, double);
 void popPedido(SubPila*&);
-void vaciarSubPila(SubPila*&);
 void MostrarPedidos(SubPila*);
 //* Pila: Cliente
 void pushCliente(Pila*&, SubPila*&, string, int, string, int, double);
@@ -83,7 +82,7 @@ void MostrarHistorial(Pila*);
 //PROTOTIPOS DEL PROGRAMA
 void MostrarPlato(ListaSimple1*);
 void MostrarPlatosSegunEdad(ListaSimple1*, int);
-
+void ajustarInventario(ListaSimple1*);
 
 int main(){
     ListaSimple1* Plato = NULL;
@@ -110,8 +109,10 @@ int main(){
 
     string dia[] = { "LUNES", "MARTES", "MIERCOLES", "JUEVES", "VIERNES", "SABADO", "DOMINGO" };
     string nombreC, pedido;
-    int i = 1, j, edad, raciones;
-    char opc;
+    double ingresos = 0.0, ganancias = 0.0, inv = 0.0;
+    int i = 1, j, edad, raciones, w = 0;
+    char opc, rpst;
+    int opcion;
     bool marca = true;
     while(true){
         cout<<"                                  *************** Semana "<<i<<" *************** \n";
@@ -135,26 +136,68 @@ int main(){
 					cout << endl;
 					cout << endl;
                     MostrarPlatosSegunEdad(Plato, edad);
-                    encolarCliente(Cliente, Pedido, Plato, frenteC, finC, nombreC, edad);
-                        
-
+                    encolarCliente(Cliente, Pedido, Plato, frenteC, finC, nombreC, edad, ingresos, inv);
   
       
-                    cout<<" *Siguiente cliente? (S/N)? \n";
+                    cout<<" \n*Siguiente cliente? (S/N)?: ";
                     cin>>opc;
                     if (opc == 'N' || opc == 'n'){
                         break;
                     }   
             }
             imprimirColaClientes(frenteC);
+            vaciarColaClientes(frenteC, finC);
+            InsertarInfoDia(InfoDia, dia, ingresos, ganancias, w, inv);
+
         }
 
         i++;
-        //! IMPLEMENTACION DE SWITCH PARA EL FINAL DE CADA SEMANA, (MostrarHistorial, mostrarInfoDia, mostrarListaSimple, ajustarInventario); 
-                        cout<<" COMPROBACION DE REGISTRO \n";
-             MostrarHistorial(Cliente);
-        //!.............
-        cout<<"Siguiente semana (S/N)? \n";
+        while(true){
+            cout<<"************* ADMINISTRACION FIN DE LA SEMANA ********************* \n";
+            cout<<" [1] Ver historial de pedidos de la semana. \n";
+            cout<<" [2] Ver Ganancias de la semana.\n";
+            cout<<" [3] Ver ivententario de inversiones. \n";
+            cout<<" [4] Ajustar Inventario. \n ";
+            cout<<" (0) Salir...\n";
+            cout<<"******************************************************************** \n";
+            cout<<"Opcion: ";
+            cin>> opcion;
+            switch(opcion){
+                case 0: {
+                    cout<<"\n Saliendo... \n";
+                    break;
+                }
+                case 1: {
+                    MostrarHistorial(Cliente);
+                    break;
+                }
+                case 2: {
+                    MostrarInfoDia(InfoDia);
+                    break;
+                }
+                case 3: {
+                    MostrarListaPlatos(Plato);
+                    break;
+                }
+                case 4: {
+                    ajustarInventario(Plato);
+                    break;
+                }
+                default: {
+                    cout<<" Porfavor, elija una opcion que se encuentre en el menu. \n";
+                    break;
+                }
+            }
+            cout<<" (Regresar al menu? [S/N]) ";
+            cin>>rpst;
+            if(rpst == 'N' || rpst == 'n'){
+                break;
+            }
+        }
+        //NUEVA SEMANA = REINICIAR LA PILA Y INFO SEMANAL.
+        vaciarPila(Cliente);
+        VaciarInfoSemana(InfoDia);
+        cout<<"# Siguiente semana (S/N)?: ";
         cin>>opc;
         if (opc == 'N' || opc == 'n'){
             break;
@@ -172,6 +215,7 @@ void InsertarPlato(ListaSimple1*& Plato, string nomPlato, int cal, int stock, do
     p->calorias = cal;
     p->stock = stock;
     p->precio = precio;
+    p->inversion = stock * inversion;
     p->sig = NULL;
     
     if (Plato == NULL){
@@ -190,11 +234,12 @@ void MostrarListaPlatos(ListaSimple1* Plato){
     ListaSimple1* lista = Plato;
     
     while(lista != NULL){
-    
+        cout<<"---------------------------\n";
         cout<<"*"<<lista->nombre<<"* "<<endl;
 		cout<<"Calorias: "<<lista->calorias <<endl;
 		cout<<"Stock: "<<lista->stock<<endl;
 		cout<<"Precio: s/. "<<lista->precio<<endl;
+        cout<<"Inversion: s/."<<lista->inversion<<endl;
 		cout << "----------------------\n";
         lista = lista->sig;
         
@@ -226,15 +271,17 @@ void EliminarPlatoEspecifico(ListaSimple1*& Plato, string valor){
 
 //! OPERACIONES Lista de Inversion, gastos, etc. de cada dia de la semana.
 //* Insertar Informacion Diario de la semana.
-void InsertarInfoDia(ListaSimple2*& InfoDia, string nomDia, double ingresos, double ganancias){
+void InsertarInfoDia(ListaSimple2*& InfoDia, string dia[], double ingresos, double ganancias, int w, double inv){
     ListaSimple2* p;
     ListaSimple2* lista;
     p = new ListaSimple2;
-    p->nombreDia = nomDia;
+    p->nombreDia = dia[w];
     p->ingresos = ingresos;
+    ganancias = ingresos - inv;
     p->ganancias = ganancias;
     p->sig = NULL;
-    
+    w++;
+
     if (InfoDia == NULL){
         InfoDia = p;
     } else {
@@ -248,11 +295,16 @@ void InsertarInfoDia(ListaSimple2*& InfoDia, string nomDia, double ingresos, dou
 //* Reporta la informacion de cada dia de la semana.
 void MostrarInfoDia(ListaSimple2* InfoDia){
     ListaSimple2* lista = InfoDia;
+    double gananciaSemanal = 0.0;
     while(lista != NULL){
-        cout<<lista->nombreDia << " ";
+        cout<<lista->nombreDia << " \n";
+        cout<<lista->ingresos << " \n";
+        cout<<lista->ganancias << " \n";
+        gananciaSemanal += lista->ganancias;
         lista = lista->sig;
     }
-    cout << endl;
+    cout<<" ! { GANANCIAS SEMANAL: "<<gananciaSemanal<<"} !\n";
+    cout<< endl;
 }
 //* Elimina la informacion del dia.
 void eliminarInicio(ListaSimple2* & InfoDia){
@@ -283,7 +335,7 @@ void imprimirColaPedidos(SubCola* frenteP){
 
 //! OPERACIONES Cola de clientes.
 //* Encolar nuevo cliente.
-void encolarCliente(Pila*& Cliente,SubPila*& Pedido, ListaSimple1* Plato, Cola*& frenteC, Cola*& finC, string nombreC, int edad) {
+void encolarCliente(Pila*& Cliente,SubPila*& Pedido, ListaSimple1* Plato, Cola*& frenteC, Cola*& finC, string nombreC, int edad, double ingresos, double inv) {
     Cola* nuevoNodo = new Cola;
     nuevoNodo->nombreCliente = nombreC;
     nuevoNodo->edad = edad;
@@ -329,8 +381,10 @@ void encolarCliente(Pila*& Cliente,SubPila*& Pedido, ListaSimple1* Plato, Cola*&
                 }
 
                 listaActual->stock -= raciones;
-
+                double invUnidad = listaActual->inversion * raciones; 
                 cout << " << Agregado con exito >> \n";
+                ingresos += compra; 
+                inv += invUnidad; 
                 pushCliente(Cliente, Pedido, nombreC, edad, pedido, raciones, compra);
                 break;
             } else {
@@ -371,6 +425,7 @@ void vaciarColaClientes(Cola*& frenteC, Cola*& finC){
 
 //* Imprimir  los clientes.
 void imprimirColaClientes(Cola* frenteC) {
+    cout << "\n\n`````````````````````````````` \n";
     cout << "  Pedidos del dia: \n";
     while (frenteC != NULL) {
         cout << "-----------------------\n";
@@ -411,12 +466,7 @@ void popPedido(SubPila*& Pedido){
         cout<<" La pila de Pedidos esta vacia, ya no se puede quitar mas pedidos... \n";
     }
 }
-//* Saca todos los pedidos del cliente.
-void vaciarSubPila(SubPila*& Pedido){
-    while(Pedido != NULL){
-        popPedido(Pedido);
-    }
-}
+
 //* Muestra la pila de pedidos del cliente.
 void MostrarPedidos(SubPila* Pedido){
     SubPila* actual = Pedido;
@@ -458,11 +508,13 @@ void vaciarPila(Pila*& Cliente){
 //* Reporte de todos los clientes de la semana.
 void MostrarHistorial(Pila* Cliente){
     Pila* actual = Cliente;
+    cout<<" ~~~~~~~~~~~~~~~~~~ Historial ~~~~~~~~~~~~~~~~~~~~~ \n";
     while (actual != NULL) {
-        cout << "Cliente: " << actual->nombreCliente << ", Edad: " << actual->edad << endl;
+        cout << "\nCliente: " << actual->nombreCliente << ", Edad: " << actual->edad << endl;
         MostrarPedidos(actual->Pedido);
         actual = actual->sig;
     }
+    cout<<" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \n";
 }
 
 void MostrarPlato(ListaSimple1* lista){
@@ -612,7 +664,79 @@ void MostrarPlatosSegunEdad(ListaSimple1* Plato, int edad){
 		}
 		
 }
+void AumentarStock(ListaSimple1* Plato){
+    string nomplato;
+    int aum;
+    cout<<" * Ingrese el plato que desea aumentarle stock de inversion: ";
+    cin.ignore();
+    getline(cin, nomplato);
+    ListaSimple1* lista = Plato;
+    while(lista != NULL){
+        if (lista->nombre.compare(nomplato)){
+            cout<<" Cantidad de aumento: ";
+            cin>>aum;
+            lista->stock += aum;
+            cout<<"<< "<<lista->nombre<<" ahora tiene un stock de ["<<lista->stock<<"] >> \n";
+            break;
+         } else {
+            lista = lista->sig;
+        }
+    }
+}
+void CambiarPrecio(ListaSimple1* Plato){
+    string nomplato;
+    double nuevoPrecio;
+    cout<<" * Ingrese el plato que desea cambiarle el precio: ";
+    cin.ignore();
+    getline(cin, nomplato);
+    ListaSimple1* lista = Plato;
+    while(lista != NULL){
+        if (lista->nombre.compare(nomplato)){
+            cout<<" Cambio de precio: ";
+            cin>>nuevoPrecio;
+            lista->precio = nuevoPrecio;
+            cout<<"<< "<<lista->nombre<<" ahora tiene un precio de s/."<<lista->precio<<"] >> \n";
+            break;
+         } else {
+            lista = lista->sig;
+        }
+    }
+}
 
-void CambiosDelStock(){
+void ajustarInventario(ListaSimple1* Plato){
 
+    while(true){
+        int opc;
+        char rpt;
+        cout<<" Que desea hacer? \n\n";
+        cout<<" ////////////////////////////////// \n";
+        cout<<" [1] Aumentar el stock de un plato. \n";
+        cout<<" [2] Cambiar el precio de un plato. \n";
+        cout<<" (0) SALIR... \n";
+        cout<<" /////////////////////////////////// \n";
+        cout<<" Opcion: ";
+        cin>>opc;
+        switch(opc){
+            case 0: {
+                cout<<"Regresando...\n";
+                break;
+            }
+            case 1: {
+                AumentarStock(Plato);
+                break;
+            }
+            case 2: {
+                CambiarPrecio(Plato);
+                break;
+            }
+            default: {
+                cout<<" Ingrese una opcion valida del menu... \n";
+            }
+        }
+        cout<<"Otro ajuste? (S/N):  \n";
+        cin>>rpt;
+        if(rpt == 'n' || rpt == 'N'){
+            break;
+        }
+    }   
 }
