@@ -65,17 +65,17 @@ void VaciarInfoSemana(ListaSimple2*&);
 //* SubCola: Pedido
 void imprimirColaPedidos(SubCola*);
 //* Cola: Cliente;
-void encolarCliente(ListaSimple1*, Cola*&, SubCola*&, Cola*&, SubCola*&, string, int, string, int);
+void encolarCliente(Pila*&, SubPila*&, ListaSimple1*, Cola*&, Cola*&, string, int);
 void desencolarCliente(Cola*&, Cola*&);
 void vaciarColaClientes(Cola*&, Cola*&);
-void imprimirColaClientes(Cola*, SubCola*);
+void imprimirColaClientes(Cola*);
 //* SubPila: Pedido
 void pushPedido(SubPila*&, string, int, double);
 void popPedido(SubPila*&);
 void vaciarSubPila(SubPila*&);
 void MostrarPedidos(SubPila*);
 //* Pila: Cliente
-void pushCliente(Pila*&, SubPila*&, string, string, string, int, double);
+void pushCliente(Pila*&, SubPila*&, string, int, string, int, double);
 void popCliente(Pila*&);
 void vaciarPila(Pila*&);
 void MostrarHistorial(Pila*);
@@ -135,7 +135,7 @@ int main(){
 					cout << endl;
 					cout << endl;
                     MostrarPlatosSegunEdad(Plato, edad);
-                    encolarCliente(Plato, frenteC, frenteP, finC, finP, nombreC, edad, pedido, raciones);
+                    encolarCliente(Cliente, Pedido, Plato, frenteC, finC, nombreC, edad);
                         
 
   
@@ -146,9 +146,14 @@ int main(){
                         break;
                     }   
             }
+            imprimirColaClientes(frenteC);
         }
 
         i++;
+        //! IMPLEMENTACION DE SWITCH PARA EL FINAL DE CADA SEMANA, (MostrarHistorial, mostrarInfoDia, mostrarListaSimple, ajustarInventario); 
+                        cout<<" COMPROBACION DE REGISTRO \n";
+             MostrarHistorial(Cliente);
+        //!.............
         cout<<"Siguiente semana (S/N)? \n";
         cin>>opc;
         if (opc == 'N' || opc == 'n'){
@@ -268,68 +273,81 @@ void VaciarInfoSemana(ListaSimple2*& InfoDia){
 
 //* Reporta los pedidos de cada cliente.
 void imprimirColaPedidos(SubCola* frenteP){
-    cout<< "Pedidos: ";
+    cout << "Pedidos: \n";
     while (frenteP != NULL) {
-        cout<<frenteP->pedido << " ";
-        cout<<frenteP->raciones << " \n";
+        cout << "- "<< frenteP->pedido << ": " << frenteP->raciones << " raciones. \n";
         frenteP = frenteP->sig;
     }
-    cout<<endl;
+    cout << endl;
 }
 
 //! OPERACIONES Cola de clientes.
 //* Encolar nuevo cliente.
-//? Falta comprobar por impresion si cada cliente tiene su propia cola de Pedidos, y tambien falta asignar cada cliente a la Pila.
-void encolarCliente(ListaSimple1* Plato, Cola*& frenteC, SubCola*& frenteP, Cola*& finC, SubCola*& finP, string nombreC, int edad, string pedido, int raciones){
+void encolarCliente(Pila*& Cliente,SubPila*& Pedido, ListaSimple1* Plato, Cola*& frenteC, Cola*& finC, string nombreC, int edad) {
     Cola* nuevoNodo = new Cola;
     nuevoNodo->nombreCliente = nombreC;
     nuevoNodo->edad = edad;
     nuevoNodo->Pedido = NULL;
     nuevoNodo->sig = NULL;
+
     if (frenteC == NULL) {
-        frenteC = finC= nuevoNodo;
+        frenteC = finC = nuevoNodo;
     } else {
         finC->sig = nuevoNodo;
         finC = nuevoNodo;
     }
+
     char rpt = 's';
-    do{
+    do {
         ListaSimple1* listaActual = Plato;
-        cout<<"Ingrese su plato a pedir: ";
+        string pedido;
+        int raciones;
+
+        cout << "Ingrese su plato a pedir: ";
         cin.ignore();
         getline(cin, pedido);
-        cout<<"Cantidad de raciones: ";
-        cin>>raciones;
-        SubCola* PedidoCliente = NULL;
-        while (listaActual != NULL){
-            if (listaActual->nombre.compare(pedido) && listaActual->stock >= raciones){
-                if (PedidoCliente == NULL){
-                    PedidoCliente = new SubCola;
-                    PedidoCliente->sig = NULL;
-                    frenteP = finP = PedidoCliente;
-                    nuevoNodo->Pedido = PedidoCliente;
-                }
+        cout << "Cantidad de raciones: ";
+        cin >> raciones;
+
+        while (listaActual != NULL) {
+            if (listaActual->nombre.compare(pedido) && listaActual->stock >= raciones) {
                 SubCola* nuevoPedido = new SubCola;
-                nuevoPedido->pedido = pedido; 
+                nuevoPedido->pedido = pedido;
                 nuevoPedido->raciones = raciones;
-                nuevoPedido->compra = raciones * listaActual->precio;
+                double compra = raciones* listaActual->precio;
+                nuevoPedido->compra = compra;
                 nuevoPedido->sig = NULL;
-                finP->sig = nuevoPedido;
-                finP = nuevoPedido;
+
+                if (nuevoNodo->Pedido == NULL) {
+                    nuevoNodo->Pedido = nuevoPedido;
+                } else {
+                    SubCola* temp = nuevoNodo->Pedido;
+                    while (temp->sig != NULL) {
+                        temp = temp->sig;
+                    }
+                    temp->sig = nuevoPedido;
+                }
+
                 listaActual->stock -= raciones;
-                cout<<" << Agregado con exito >> \n";
+
+                cout << " << Agregado con exito >> \n";
+                pushCliente(Cliente, Pedido, nombreC, edad, pedido, raciones, compra);
                 break;
             } else {
                 listaActual = listaActual->sig;
             }
         }
-        if (listaActual == NULL){
-            cout<<" No hay suficiente stock de tu pedido, intente con otro o disminuya las raciones. \n";
+
+        if (listaActual == NULL) {
+            cout << " No hay suficiente stock de tu pedido, intente con otro o disminuya las raciones. \n";
         }
-        cout<<" *Otro plato (S/N)?: ";
-        cin>>rpt;
-    } while(rpt == 's' || rpt == 'S');
+
+        cout << " *Otro plato (S/N)?: ";
+        cin >> rpt;
+    } while (rpt == 's' || rpt == 'S');
 }
+
+
 //* Desencolar cliente
 void desencolarCliente(Cola*& frenteC, Cola*& finC){
     if (frenteC != NULL) {
@@ -352,27 +370,36 @@ void vaciarColaClientes(Cola*& frenteC, Cola*& finC){
 }
 
 //* Imprimir  los clientes.
-void imprimirColaClientes(Cola* frenteC, SubCola* frenteP){
-    cout<< "Cola: ";
+void imprimirColaClientes(Cola* frenteC) {
+    cout << "  Pedidos del dia: \n";
     while (frenteC != NULL) {
-        cout<<frenteC->nombreCliente << " ";
-        imprimirColaPedidos(frenteP);
+        cout << "-----------------------\n";
+        cout << frenteC->nombreCliente << "  " << frenteC->edad << " años. \n";
+        imprimirColaPedidos(frenteC->Pedido);  // Ahora pasa la subcola del cliente
 
         frenteC = frenteC->sig;
     }
-    cout<<endl;
+    cout << endl;
 }
 
 //!OPERACIONES Pila de pedidos de cada cliente.
 //* Insertar cliente al historial.
-void pushPedido(SubPila*& Pedido, string pedido, int raciones, double compra){
+void pushPedido(SubPila*& Pedido, string pedido, int raciones, double compra) {
     SubPila* nuevoPedido = new SubPila;
     nuevoPedido->pedido = pedido;
     nuevoPedido->raciones = raciones;
     nuevoPedido->compra = compra;
-    
-    nuevoPedido->sig = Pedido;
-    Pedido = nuevoPedido;
+    nuevoPedido->sig = NULL;
+
+    if (Pedido == NULL) {
+        Pedido = nuevoPedido; 
+    } else {
+        SubPila* temp = Pedido;
+        while (temp->sig != NULL) {
+            temp = temp->sig;
+        }
+        temp->sig = nuevoPedido;
+    }
 }
 //* Saca el ultimo pedido insertado.
 void popPedido(SubPila*& Pedido){
@@ -393,22 +420,23 @@ void vaciarSubPila(SubPila*& Pedido){
 //* Muestra la pila de pedidos del cliente.
 void MostrarPedidos(SubPila* Pedido){
     SubPila* actual = Pedido;
+    cout<<" Pedidos: \n";
     while (actual != NULL) {
-        cout << "Cliente: " << actual->pedido<< ", Edad: " << actual->raciones << endl;
+        cout << "- " << actual->pedido<< ": " << actual->raciones << " raciones "<<endl;
         actual = actual->sig;
     }
 }
 
 //! OPERACIONES Pila de cliente y sus pedidos (historial de la semana).
 //* Insertar un nuevo pedido al historial.
-void pushCliente(Pila*& Cliente, SubPila*& Pedido, string nomCliente, int edad, string pedido, int raciones, double compra){
+void pushCliente(Pila*& Cliente, SubPila*& Pedido, string nombreC, int edad, string pedido, int raciones, double compra){
     Pila* nuevoCliente = new Pila;
-    nuevoCliente->nombreCliente = nomCliente;
+    nuevoCliente->nombreCliente = nombreC;
     nuevoCliente->edad = edad;
-    for(int i = 0; i < raciones; i++){
-        pushPedido(Pedido, pedido, raciones, compra);
-    }
+    nuevoCliente->Pedido = NULL;
     nuevoCliente->sig = Cliente;
+    pushPedido(nuevoCliente->Pedido, pedido, raciones, compra);
+    
     Cliente = nuevoCliente;
 }
 //* Saca el ultimo cliente insertado.
@@ -432,10 +460,10 @@ void MostrarHistorial(Pila* Cliente){
     Pila* actual = Cliente;
     while (actual != NULL) {
         cout << "Cliente: " << actual->nombreCliente << ", Edad: " << actual->edad << endl;
+        MostrarPedidos(actual->Pedido);
         actual = actual->sig;
     }
 }
-
 
 void MostrarPlato(ListaSimple1* lista){
         cout<<"                                                 *"<<lista->nombre<<"* "<<endl;
