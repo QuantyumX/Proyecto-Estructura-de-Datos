@@ -33,14 +33,3 @@ Estructuras:
 * InversionPredeterminada...
 * CalcularGanancias, etc
 * etc...
-
-## ORDEN DE CONTRIBUCION:
-Asi quedamos, por obvias razones todos no podemos hacer una parte al mismo tiempo, si no que en orden y en el repositorio el archivo <proyecto.cpp> se va a ir actualizando.
-ya les ire guiando.
-
-* 1° Harold haces las operaciones necesarias para la Pila y ListaSimple.
-* 2° Yo llenare todas la estructuras con la info, y tambien despues de cada bloque.
-* 3° Angel, hace el bloque de recomendar plato segun la edad.
-* 4° Julio y Mauro haran la parte de calcular la ganancia en toda la semana y como se invertira para la siguiente.
-* 5° Eduar es el tester.
-
