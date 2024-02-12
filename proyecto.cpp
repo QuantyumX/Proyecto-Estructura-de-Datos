@@ -59,7 +59,7 @@ void InsertarPlato(ListaSimple1*&, string, int, int, double, double);
 void MostrarListaPlatos(ListaSimple1*);
 void EliminarPlatoEspecifico(ListaSimple1*&, string);
 //* ListaSimple2: InfoDia
-void InsertarInfoDia(ListaSimple2*&, double*, double, int*, double*);
+void InsertarInfoDia(ListaSimple2*&, double*, double, int*, double*, double*, double*);
 void MostrarInfoDia(ListaSimple2*);
 void eliminarInfoInicio(ListaSimple2* &);
 void VaciarInfoSemana(ListaSimple2*&);
@@ -84,6 +84,8 @@ void MostrarHistorial(Pila*);
 void MostrarPlato(ListaSimple1*);
 void MostrarPlatosSegunEdad(ListaSimple1*, int);
 void ajustarInventario(ListaSimple1*);
+void AumentarStock(ListaSimple1*);
+void CambiarPrecio(ListaSimple1*);
 
 int main(){
     ListaSimple1* Plato = NULL;
@@ -152,7 +154,7 @@ int main(){
             }
             ingresos += compraT; 
             inv += invUT; 
-            InsertarInfoDia(InfoDia, &ingresos, ganancias, &w, &inv);
+            InsertarInfoDia(InfoDia, &ingresos, ganancias, &w, &inv, &invUT, &compraT);
             imprimirColaClientes(frenteC);
             vaciarColaClientes(frenteC, finC);
 
@@ -160,7 +162,7 @@ int main(){
 
         i++;
         while(true){
-            cout<<"************* ADMINISTRACION FIN DE LA SEMANA ********************* \n";
+            cout<<"\n\n************* ADMINISTRACION FIN DE LA SEMANA ********************* \n";
             cout<<" [1] Ver historial de pedidos de la semana. \n";
             cout<<" [2] Ver Ganancias de la semana.\n";
             cout<<" [3] Ver ivententario de inversiones. \n";
@@ -255,7 +257,11 @@ void MostrarListaPlatos(ListaSimple1* Plato){
    
 }
 //* Eliminar Plato Especifico .
-void EliminarPlatoEspecifico(ListaSimple1*& Plato, string valor){
+void EliminarPlatoEspecifico(ListaSimple1*& Plato){
+    string valor;
+    cout<<"Ingrese el nombre del plato a eliminar: ";
+    cin.ignore();
+    getline(cin, valor);
     ListaSimple1* lista = Plato;
     ListaSimple1* anterior = NULL;
 
@@ -279,14 +285,15 @@ void EliminarPlatoEspecifico(ListaSimple1*& Plato, string valor){
 
 //! OPERACIONES Lista de Inversion, gastos, etc. de cada dia de la semana.
 //* Insertar Informacion Diario de la semana.
-void InsertarInfoDia(ListaSimple2*& InfoDia, double *ingresos, double ganancias, int *w, double *inv){
+void InsertarInfoDia(ListaSimple2*& InfoDia, double *ingresos, double ganancias, int *w, double *inv, double *invUT, double *compraT){
     string dia[] = { "LUNES", "MARTES", "MIERCOLES", "JUEVES", "VIERNES", "SABADO", "DOMINGO" };
+    ganancias = 0.0;
     ListaSimple2* p;
     ListaSimple2* lista;
     p = new ListaSimple2;
     p->nombreDia = dia[*w];
-    p->ingresos = *ingresos;
-    ganancias = *ingresos - *inv;
+    p->ingresos = *compraT;
+    ganancias = *compraT - *invUT;
     p->ganancias = ganancias;
     p->sig = NULL;
     (*w)++;
@@ -391,7 +398,7 @@ void encolarCliente(Pila*& Cliente, SubPila*& Pedido, ListaSimple1* Plato, Cola*
                 }
                 listaActual->stock -= raciones;
                 listaActual->inversion = listaActual->stock * listaActual->inversionXunidad;
-                double invUnidad = listaActual->inversion * raciones; 
+                double invUnidad = listaActual->inversionXunidad * raciones; 
                 cout << " << Agregado con exito >> \n";
                 (*compraT) = (*compraT) + compra;
                 (*invUT) = (*invUT) + invUnidad;
@@ -521,7 +528,7 @@ void MostrarHistorial(Pila* Cliente){
     Pila* actual = Cliente;
     cout<<" ~~~~~~~~~~~~~~~~~~ Historial ~~~~~~~~~~~~~~~~~~~~~ \n";
     while (actual != NULL) {
-        cout<< "<<<<<<<<<<                >>>>>>>>>>>\n";
+        cout<< "<<<<<<<<<<-------->>>>>>>>>>>\n";
         cout << "\nCliente: " << actual->nombreCliente << ", Edad: " << actual->edad << endl;
         MostrarPedidos(actual->Pedido);
         actual = actual->sig;
@@ -676,6 +683,7 @@ void MostrarPlatosSegunEdad(ListaSimple1* Plato, int edad){
 		}
 		
 }
+
 void AumentarStock(ListaSimple1* Plato){
     string nomplato;
     int aum;
@@ -695,9 +703,11 @@ void AumentarStock(ListaSimple1* Plato){
         }
     }
 }
+
 void CambiarPrecio(ListaSimple1* Plato){
     string nomplato;
     double nuevoPrecio;
+
     cout<<" * Ingrese el plato que desea cambiarle el precio: ";
     cin.ignore();
     getline(cin, nomplato);
@@ -715,8 +725,27 @@ void CambiarPrecio(ListaSimple1* Plato){
     }
 }
 
-void ajustarInventario(ListaSimple1* Plato){
+void IngresarNuevoPlato(ListaSimple1*& Plato){
+    string nomPlato;
+    int stock, cal;
+    double precio, inversion;
 
+    cout<<"     Ingrese el nombre de plato: ";
+    cin.ignore();
+    getline(cin, nomPlato);
+    cout<<"     Ingrese las calorias que tiene: ";
+    cin>>cal;
+    cout<<"     Ingrese el stock de inversion determinado: ";
+    cin>>stock;
+    cout<<"     Ingrese el precio de venta del plato: ";
+    cin>>precio;
+    cout<<"     Ingrese la inversion de por unidad de plato: ";
+    cin>>inversion;
+    InsertarPlato(Plato, nomPlato, cal, stock, precio, inversion);
+    cout<<" << Plato agregado exitosamente >> \n";
+}
+
+void ajustarInventario(ListaSimple1* Plato){
     while(true){
         int opc;
         char rpt;
@@ -724,10 +753,13 @@ void ajustarInventario(ListaSimple1* Plato){
         cout<<" ////////////////////////////////// \n";
         cout<<" [1] Aumentar el stock de un plato. \n";
         cout<<" [2] Cambiar el precio de un plato. \n";
+        cout<<" [3] Ingresar un nuevo plato al menu. (CON PRECAUCION) \n";
+        cout<<" [4] Eliminar un plato del menu ya existente. (CON PRECAUCION) \n";
         cout<<" (0) SALIR... \n";
         cout<<" /////////////////////////////////// \n";
         cout<<" Opcion: ";
         cin>>opc;
+        
         switch(opc){
             case 0: {
                 cout<<"Regresando...\n";
@@ -741,6 +773,16 @@ void ajustarInventario(ListaSimple1* Plato){
                 CambiarPrecio(Plato);
                 break;
             }
+            case 3: {
+                IngresarNuevoPlato(Plato);
+                break;
+            }
+            case 4: {
+                EliminarPlatoEspecifico(Plato);
+                cout<<" << Eliminado con exito >> \n";
+                break;
+            }
+
             default: {
                 cout<<" Ingrese una opcion valida del menu... \n";
             }
