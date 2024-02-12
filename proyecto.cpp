@@ -8,6 +8,7 @@ struct ListaSimple1{ //!Lista de Platos
     int calorias;
     int stock;
     double precio;
+    double inversionXunidad;
     double inversion;
     ListaSimple1* sig;
 };
@@ -58,14 +59,14 @@ void InsertarPlato(ListaSimple1*&, string, int, int, double, double);
 void MostrarListaPlatos(ListaSimple1*);
 void EliminarPlatoEspecifico(ListaSimple1*&, string);
 //* ListaSimple2: InfoDia
-void InsertarInfoDia(ListaSimple2*&, string[], double, double, int, double);
+void InsertarInfoDia(ListaSimple2*&, double*, double, int*, double*);
 void MostrarInfoDia(ListaSimple2*);
 void eliminarInfoInicio(ListaSimple2* &);
 void VaciarInfoSemana(ListaSimple2*&);
 //* SubCola: Pedido
 void imprimirColaPedidos(SubCola*);
 //* Cola: Cliente;
-void encolarCliente(Pila*&, SubPila*&, ListaSimple1*, Cola*&, Cola*&, string, int, double, double);
+void encolarCliente(Pila*&, SubPila*&, ListaSimple1*, Cola*&, Cola*&, string, int, double*, double*);
 void desencolarCliente(Cola*&, Cola*&);
 void vaciarColaClientes(Cola*&, Cola*&);
 void imprimirColaClientes(Cola*);
@@ -109,7 +110,7 @@ int main(){
 
     string dia[] = { "LUNES", "MARTES", "MIERCOLES", "JUEVES", "VIERNES", "SABADO", "DOMINGO" };
     string nombreC, pedido;
-    double ingresos = 0.0, ganancias = 0.0, inv = 0.0;
+    double ingresos = 0.0, ganancias = 0.0, inv = 0.0, inversion, compraT = 0.0, invUT = 0.0;
     int i = 1, j, edad, raciones, w = 0;
     char opc, rpst;
     int opcion;
@@ -117,9 +118,13 @@ int main(){
     while(true){
         cout<<"                                  *************** Semana "<<i<<" *************** \n";
         int k = 0;
+        inv = 0.0;
+        ingresos = 0.0;
         for (j = 0; j<7; j++){
             cout<<"                                       --------- Dia "<<dia[k]<<"---------  \n ";
             k++;
+            compraT = 0.0;
+            invUT = 0.0;
             while (true){
                     cout<<"\n";
 					cout << "               				[!INGRESA   TU   EDAD!]                              "<<endl;
@@ -136,7 +141,7 @@ int main(){
 					cout << endl;
 					cout << endl;
                     MostrarPlatosSegunEdad(Plato, edad);
-                    encolarCliente(Cliente, Pedido, Plato, frenteC, finC, nombreC, edad, ingresos, inv);
+                    encolarCliente(Cliente, Pedido, Plato, frenteC, finC, nombreC, edad,  &invUT, &compraT);
   
       
                     cout<<" \n*Siguiente cliente? (S/N)?: ";
@@ -145,9 +150,11 @@ int main(){
                         break;
                     }   
             }
+            ingresos += compraT; 
+            inv += invUT; 
+            InsertarInfoDia(InfoDia, &ingresos, ganancias, &w, &inv);
             imprimirColaClientes(frenteC);
             vaciarColaClientes(frenteC, finC);
-            InsertarInfoDia(InfoDia, dia, ingresos, ganancias, w, inv);
 
         }
 
@@ -215,7 +222,8 @@ void InsertarPlato(ListaSimple1*& Plato, string nomPlato, int cal, int stock, do
     p->calorias = cal;
     p->stock = stock;
     p->precio = precio;
-    p->inversion = stock * inversion;
+    p->inversionXunidad = inversion;
+    p->inversion = p->stock * p->inversionXunidad;
     p->sig = NULL;
     
     if (Plato == NULL){
@@ -271,16 +279,17 @@ void EliminarPlatoEspecifico(ListaSimple1*& Plato, string valor){
 
 //! OPERACIONES Lista de Inversion, gastos, etc. de cada dia de la semana.
 //* Insertar Informacion Diario de la semana.
-void InsertarInfoDia(ListaSimple2*& InfoDia, string dia[], double ingresos, double ganancias, int w, double inv){
+void InsertarInfoDia(ListaSimple2*& InfoDia, double *ingresos, double ganancias, int *w, double *inv){
+    string dia[] = { "LUNES", "MARTES", "MIERCOLES", "JUEVES", "VIERNES", "SABADO", "DOMINGO" };
     ListaSimple2* p;
     ListaSimple2* lista;
     p = new ListaSimple2;
-    p->nombreDia = dia[w];
-    p->ingresos = ingresos;
-    ganancias = ingresos - inv;
+    p->nombreDia = dia[*w];
+    p->ingresos = *ingresos;
+    ganancias = *ingresos - *inv;
     p->ganancias = ganancias;
     p->sig = NULL;
-    w++;
+    (*w)++;
 
     if (InfoDia == NULL){
         InfoDia = p;
@@ -297,9 +306,10 @@ void MostrarInfoDia(ListaSimple2* InfoDia){
     ListaSimple2* lista = InfoDia;
     double gananciaSemanal = 0.0;
     while(lista != NULL){
-        cout<<lista->nombreDia << " \n";
-        cout<<lista->ingresos << " \n";
-        cout<<lista->ganancias << " \n";
+        cout<<"\n  -------- "<<lista->nombreDia << " ----------- \n";
+        cout<<"Ingresos del dia: "<<lista->ingresos << " \n";
+        cout<<"Ganancias del dia: "<<lista->ganancias << " \n";
+        cout<<" ---------------------------------------------- \n";
         gananciaSemanal += lista->ganancias;
         lista = lista->sig;
     }
@@ -335,7 +345,7 @@ void imprimirColaPedidos(SubCola* frenteP){
 
 //! OPERACIONES Cola de clientes.
 //* Encolar nuevo cliente.
-void encolarCliente(Pila*& Cliente,SubPila*& Pedido, ListaSimple1* Plato, Cola*& frenteC, Cola*& finC, string nombreC, int edad, double ingresos, double inv) {
+void encolarCliente(Pila*& Cliente, SubPila*& Pedido, ListaSimple1* Plato, Cola*& frenteC, Cola*& finC, string nombreC, int edad, double* invUT, double* compraT) {
     Cola* nuevoNodo = new Cola;
     nuevoNodo->nombreCliente = nombreC;
     nuevoNodo->edad = edad;
@@ -379,12 +389,12 @@ void encolarCliente(Pila*& Cliente,SubPila*& Pedido, ListaSimple1* Plato, Cola*&
                     }
                     temp->sig = nuevoPedido;
                 }
-
                 listaActual->stock -= raciones;
+                listaActual->inversion = listaActual->stock * listaActual->inversionXunidad;
                 double invUnidad = listaActual->inversion * raciones; 
                 cout << " << Agregado con exito >> \n";
-                ingresos += compra; 
-                inv += invUnidad; 
+                (*compraT) = (*compraT) + compra;
+                (*invUT) = (*invUT) + invUnidad;
                 pushCliente(Cliente, Pedido, nombreC, edad, pedido, raciones, compra);
                 break;
             } else {
@@ -399,6 +409,7 @@ void encolarCliente(Pila*& Cliente,SubPila*& Pedido, ListaSimple1* Plato, Cola*&
         cout << " *Otro plato (S/N)?: ";
         cin >> rpt;
     } while (rpt == 's' || rpt == 'S');
+
 }
 
 
@@ -429,7 +440,7 @@ void imprimirColaClientes(Cola* frenteC) {
     cout << "  Pedidos del dia: \n";
     while (frenteC != NULL) {
         cout << "-----------------------\n";
-        cout << frenteC->nombreCliente << "  " << frenteC->edad << " años. \n";
+        cout << frenteC->nombreCliente << "  " << frenteC->edad << " anios. \n";
         imprimirColaPedidos(frenteC->Pedido);  // Ahora pasa la subcola del cliente
 
         frenteC = frenteC->sig;
@@ -510,6 +521,7 @@ void MostrarHistorial(Pila* Cliente){
     Pila* actual = Cliente;
     cout<<" ~~~~~~~~~~~~~~~~~~ Historial ~~~~~~~~~~~~~~~~~~~~~ \n";
     while (actual != NULL) {
+        cout<< "<<<<<<<<<<                >>>>>>>>>>>\n";
         cout << "\nCliente: " << actual->nombreCliente << ", Edad: " << actual->edad << endl;
         MostrarPedidos(actual->Pedido);
         actual = actual->sig;
