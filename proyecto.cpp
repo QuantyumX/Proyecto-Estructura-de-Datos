@@ -118,7 +118,6 @@ int main(){
     int opcion;
     bool marca = true;
     while(true){
-        MostrarInfoDia(InfoDia);
         cout<<"                                  *************** Semana "<<i<<" *************** \n";
         w = 0;
         int k = 0;
@@ -267,21 +266,21 @@ void EliminarPlatoEspecifico(ListaSimple1*& Plato){
     ListaSimple1* lista = Plato;
     ListaSimple1* anterior = NULL;
 
-    while(lista != NULL && lista->nombre != valor){
+    while(lista && lista->nombre != valor){
         anterior = lista;
         lista = lista->sig;
     }
-    if (lista != NULL){
-        if(anterior != NULL){
-            anterior->sig = lista->sig;
-         } else {
-         Plato = lista->sig;
-         }
 
-        delete lista;
-    } else {
-        cout<<" No se encontro el Plato que se quiere eliminar. \n";
+    if (!lista){
+      cout<< " El plato no se encuentra en la lista... \n";
+      return;
     }
+    if (anterior){
+        anterior->sig = lista->sig;
+    } else {
+        Plato = lista->sig;
+    }
+    delete lista;
 }
 
 
@@ -360,6 +359,7 @@ void encolarCliente(Pila*& Cliente, SubPila*& Pedido, ListaSimple1* Plato, Cola*
     nuevoNodo->edad = edad;
     nuevoNodo->Pedido = NULL;
     nuevoNodo->sig = NULL;
+    
 
     if (frenteC == NULL) {
         frenteC = finC = nuevoNodo;
@@ -410,7 +410,6 @@ void encolarCliente(Pila*& Cliente, SubPila*& Pedido, ListaSimple1* Plato, Cola*
                 listaActual = listaActual->sig;
             }
 
-            
         }
 
         if (listaActual == NULL) {
@@ -466,18 +465,10 @@ void pushPedido(SubPila*& Pedido, string pedido, int raciones, double compra) {
     nuevoPedido->pedido = pedido;
     nuevoPedido->raciones = raciones;
     nuevoPedido->compra = compra;
-    nuevoPedido->sig = NULL;
-
-    if (Pedido == NULL) {
-        Pedido = nuevoPedido; 
-    } else {
-        SubPila* temp = Pedido;
-        while (temp->sig != NULL) {
-            temp = temp->sig;
-        }
-        temp->sig = nuevoPedido;
-    }
+    nuevoPedido->sig = Pedido;
+    Pedido = nuevoPedido;
 }
+
 //* Saca el ultimo pedido insertado.
 void popPedido(SubPila*& Pedido){
     if (Pedido != NULL){
@@ -507,8 +498,10 @@ void pushCliente(Pila*& Cliente, SubPila*& Pedido, string nombreC, int edad, str
     nuevoCliente->edad = edad;
     nuevoCliente->Pedido = NULL;
     nuevoCliente->sig = Cliente;
+
     pushPedido(nuevoCliente->Pedido, pedido, raciones, compra);
-    
+
+    nuevoCliente->sig = Cliente;
     Cliente = nuevoCliente;
 }
 //* Saca el ultimo cliente insertado.
@@ -527,7 +520,7 @@ void vaciarPila(Pila*& Cliente){
         popCliente(Cliente);
     }
 }
-//* Reporte de todos los clientes de la semana.
+//* Reporte de todos los clientes de la semana. Uso de la pila.
 void MostrarHistorial(Pila* Cliente){
     Pila* actual = Cliente;
     cout<<" ~~~~~~~~~~~~~~~~~~ Historial ~~~~~~~~~~~~~~~~~~~~~ \n";
@@ -698,6 +691,7 @@ void AumentarStock(ListaSimple1* Plato){
             cout<<" Cantidad de aumento: ";
             cin>>aum;
             lista->stock += aum;
+            lista->inversion = lista->stock * lista->inversionXunidad;
             cout<<"<< "<<lista->nombre<<" ahora tiene un stock de ["<<lista->stock<<"] >> \n";
             break;
          } else {
