@@ -97,7 +97,7 @@ int main(){
     Cola* frenteC = NULL;
     Cola* finC = NULL;
     //INSERTAMOS LOS PLATOS DETERMINADOS.
-    InsertarPlato(Plato, "Arroz oon pollo", 630, 20, 12.90, 8);
+    InsertarPlato(Plato, "Arroz con pollo", 630, 20, 12.90, 8);
     InsertarPlato(Plato, "Tallarines verdes con pollo", 750, 15, 12.50, 7.30);
     InsertarPlato(Plato, "Causa peruana", 320, 15, 14.00, 4.60);
     InsertarPlato(Plato, "Cuy al horno", 800, 10, 25.00, 18.00);
@@ -147,19 +147,19 @@ int main(){
                     MostrarPlatosSegunEdad(Plato, edad);
                     encolarCliente(Cliente, Pedido, Plato, frenteC, finC, nombreC, edad,  &invUT, &compraT);
   
-      
+
                     cout<<" \n*Siguiente cliente? (S/N)?: ";
                     cin>>opc;
                     if (opc == 'N' || opc == 'n'){
                         break;
                     }   
             }
+
             ingresos += compraT; 
             inv += invUT; 
             InsertarInfoDia(InfoDia, &ingresos, ganancias, &w, &inv, &invUT, &compraT);
             imprimirColaClientes(frenteC);
             vaciarColaClientes(frenteC, finC);
-
         }
 
         i++;
@@ -380,8 +380,8 @@ void encolarCliente(Pila*& Cliente, SubPila*& Pedido, ListaSimple1* Plato, Cola*
         cout << "Cantidad de raciones: ";
         cin >> raciones;
 
-        while (listaActual != NULL) {
-            if (listaActual->nombre.compare(pedido) && listaActual->stock >= raciones) {
+        while (listaActual != NULL){
+            if (pedido == listaActual->nombre && listaActual->stock >= raciones) {
                 SubCola* nuevoPedido = new SubCola;
                 nuevoPedido->pedido = pedido;
                 nuevoPedido->raciones = raciones;
@@ -409,6 +409,8 @@ void encolarCliente(Pila*& Cliente, SubPila*& Pedido, ListaSimple1* Plato, Cola*
             } else {
                 listaActual = listaActual->sig;
             }
+
+            
         }
 
         if (listaActual == NULL) {
@@ -681,9 +683,7 @@ void MostrarPlatosSegunEdad(ListaSimple1* Plato, int edad){
                 lista = lista->sig;
             }
             cout << "			--------------------------------------------------------------------" << endl;
-		
-		}
-		
+		}	
 }
 
 void AumentarStock(ListaSimple1* Plato){
@@ -694,7 +694,7 @@ void AumentarStock(ListaSimple1* Plato){
     getline(cin, nomplato);
     ListaSimple1* lista = Plato;
     while(lista != NULL){
-        if (lista->nombre.compare(nomplato)){
+        if (lista->nombre == nomplato){
             cout<<" Cantidad de aumento: ";
             cin>>aum;
             lista->stock += aum;
@@ -716,7 +716,7 @@ void CambiarPrecio(ListaSimple1* Plato){
     ListaSimple1* lista = Plato;
 
     while(lista != NULL){
-        if (lista->nombre.compare(nomplato)){
+        if (lista->nombre == nomplato){
             cout<<" Cambio de precio: ";
             cin>>nuevoPrecio;
             lista->precio = nuevoPrecio;
@@ -795,5 +795,6 @@ void ajustarInventario(ListaSimple1* Plato){
         if(rpt == 'n' || rpt == 'N'){
             break;
         }
-    }   
+    }  
+     
 }
