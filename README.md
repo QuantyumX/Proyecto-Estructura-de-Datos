@@ -18,7 +18,7 @@ En el restaurante los pedidos de platos son directos por parte de los clientes c
 * ### La pila/historial de todos los pedidos de la semana desde el mas reciente hasta el ma viejo.
 * ### La Lista simple de InfoDia, donde veremos cada dia los ingresos y ganancias y calculando asi las ganancias de la semana apoyando asi al dueño.
 * ### Observar la lista de Platos que hay actualmente y sus datos.
-  * ### AJUSTAR el inventario, donde habra otro menu para configurar el inventario/lista de platos.
+* ### AJUSTAR el inventario, donde habra otro menu para configurar el inventario/lista de platos.
   * #### Aumentar el stock: Aca ingresamos el nombre del plato que queremos aumentarle mas stock para que puedan comprar la siguente semana.
   * #### Cambiar el precio: Aca ingresamos el nombre del plato que queremos cambiarle de precio, de esa forma segun como le benficie.
   * #### Ingresar un nuevo plato: Aca ingresamos con todos los datos a un nuevo plato, para la lista de platos y forme parte del menu.
