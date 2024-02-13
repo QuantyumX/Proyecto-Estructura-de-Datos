@@ -113,12 +113,14 @@ int main(){
     string dia[] = { "LUNES", "MARTES", "MIERCOLES", "JUEVES", "VIERNES", "SABADO", "DOMINGO" };
     string nombreC, pedido;
     double ingresos = 0.0, ganancias = 0.0, inv = 0.0, inversion, compraT = 0.0, invUT = 0.0;
-    int i = 1, j, edad, raciones, w = 0;
+    int i = 1, j, edad, raciones, w;
     char opc, rpst;
     int opcion;
     bool marca = true;
     while(true){
+        MostrarInfoDia(InfoDia);
         cout<<"                                  *************** Semana "<<i<<" *************** \n";
+        w = 0;
         int k = 0;
         inv = 0.0;
         ingresos = 0.0;
@@ -329,7 +331,7 @@ void eliminarInicio(ListaSimple2* & InfoDia){
 	if(InfoDia!=NULL){
 		p=InfoDia;
 		InfoDia=InfoDia->sig;
-		delete(p);
+		delete p;
 	}	
 }
 //* Elimina toda la informacion de todos los dias de la semana.
@@ -712,6 +714,7 @@ void CambiarPrecio(ListaSimple1* Plato){
     cin.ignore();
     getline(cin, nomplato);
     ListaSimple1* lista = Plato;
+
     while(lista != NULL){
         if (lista->nombre.compare(nomplato)){
             cout<<" Cambio de precio: ";
