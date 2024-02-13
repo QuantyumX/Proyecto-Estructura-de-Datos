@@ -7,29 +7,20 @@ En el restaurante los pedidos de platos son directos por parte de los clientes c
 
 
 ## Estrategias para resolver el caso:
-* ### Vamos a crear LISTA SIMPLE para llenar la informacion de los platos predeterminadamente en el codigo.
-* ### Otra LISTA SIMPLE para almacenar la informacion, gastos inversion, ganancia de cada DIA.
-* ### Una PILA, una para la informacion de pedidos del cliente para tener el historial de todos los pedidos hechos durante la semana.
-* ### Y una estructura o ARRAY (por determinarse xdd si saben cual seria mejor avisen) para el stock de los platos invertidos en la semana.
+* ### Creacion de LISTA SIMPLE para llenar la informacion de los platos en el codigo.
+* ### Creacion de LISTA SIMPLE para almacenar la informacion, gastos inversion, ganancia de cada DIA de la semana.
+* ### Creacion de 2 COLAS, una para la informacion  del cliente, y otra cola para los datos de los PEDIDOS de este mismo cliente, sirviendo como campo de la COLA general. (se eliminara los datos cada dia).
+* ### Creacion de 2 PILAS, una para la informacion del cliente y tener un historial semanal, y otra para los datos de pedidos de este mismo cliente, sirviendo como campo de la PILA general (Se va a ir asignando con la misma informacion de las colas de cada dia). (Se eliminara los datos cada fin de semana)
 
-### Ahora en un bucle de semanas y dias, haremos los pedidos en el Menu tactil, donde ahi dependiendo de la edad se va a recomendar y mostrar los platos, y ahi va a elejir el pedido que se va a almacenar en la pila de pedido y a la vez el plato escogido se va a restar 1 en la pila de stock de inversion semanal, asi repitiendo en toda la semana.
+### Iniciaremos con bucles de SEMANAS, DIAS, CLIENTES, y PEDIDOS de cada cliente, haremos los pedidos en el Menu tactil, donde ahi dependiendo de la edad del cliente, se va a recomendar y mostrar los platos, y ahi va a elejir el pedido  y la cantidad de RACIONES que se va a almacenar en la COLA y ala vez en la PILA de es forma el plato escogido se va a restar a la cantidad de raciones escogidas en el stock LISTA de platos del plato escogido.
 
-### Al termiar la primera semana, se va a mostrar la lista simple del dia lunes a domingo cada la cantidad de ventas y que platos se compro cada dia, despues se va a mostrar y calcular la ganancia semanal, lo cual indicara si hubo ganancias (mas del doble de la inversion recuperada), si no hubo ganancias (menos de la inversion), y que reconsidere ajustar los precios de cada plato de la listaSimple (si es menor que el doble pero mayor que la inversion).
+### Al termiar la primera semana, se va a mostrar un MENU DE OPCIONES DE ADMINISTRACION, donde podremos ver 
+* ### La pila/historial de todos los pedidos de la semana desde el mas reciente hasta el ma viejo.
+* ### La Lista simple de InfoDia, donde veremos cada dia los ingresos y ganancias y calculando asi las ganancias de la semana apoyando asi al dueño.
+* ### Observar la lista de Platos que hay actualmente y sus datos.
+* ### AJUSTAR el inventario, donde habra otro menu para configurar el inventario/lista de platos.
+  * #### Aumentar el stock: Aca ingresamos el nombre del plato que queremos aumentarle mas stock para que puedan comprar la siguente semana.
+  * #### Cambiar el precio: Aca ingresamos el nombre del plato que queremos cambiarle de precio, de esa forma segun como le benficie.
+  * #### Ingresar un nuevo plato: Aca ingresamos con todos los datos a un nuevo plato, para la lista de platos y forme parte del menu.
+  * #### Eliminar un plato; Aca ingresamos el nombre del plato que queremos eliminar del menu.
 
-### Despues de la indiacion se va a pedir OLBIGATORIAMENTE aumentar el stock de inversion de los platos, dependiendo del plato ya que se va a mostrar el costo y la cantidad de platos que se quiere invertir para la proxima semana.
-## Ahora OPCIONALMENTE se va a pedir reajustar los precios de los platos en el restaurante de esta manera para que se beneficie los costos y ganancia segun quiera.
-## Ahora si hay otra semana la siguiente semana, se vera como los precios se cambiaron si es que se ajustaron y los cambios necesarios como el stock etc. ...
-
-Estructuras:
-- ListaSimple para los platos.
-- Pila para los pedidos durante la semana.
-- Pila para la reserva de platos invertidos de la semana.
-
-### *APARTADO MENU TACTIL (VISUAL DE CLIENTE)
-* RecomendarPlatos
-* PedidosClientes
-* etc...
-### *APARTADO INVERSION (VISUAL ADMIN)
-* InversionPredeterminada...
-* CalcularGanancias, etc
-* etc...
